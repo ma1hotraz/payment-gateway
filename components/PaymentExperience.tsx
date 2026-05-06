@@ -1,7 +1,9 @@
 "use client";
 
 import { CardPreview } from "@/components/CardPreview";
+import { CheckoutBrand } from "@/components/CheckoutBrand";
 import { PaymentForm } from "@/components/PaymentForm";
+import { PaymentOrderSummary } from "@/components/PaymentOrderSummary";
 import { StatusScreen } from "@/components/StatusScreen";
 import { TransactionHistory } from "@/components/TransactionHistory";
 import { usePaymentFormModel } from "@/hooks/usePaymentFormModel";
@@ -47,99 +49,99 @@ export function PaymentExperience() {
     <>
       <a
         href="#checkout-main"
-        className="fixed left-3 top-3 z-50 rounded-md bg-zinc-900 px-3 py-2 text-xs font-semibold text-white opacity-0 focus:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 motion-safe:transition dark:bg-zinc-100 dark:text-zinc-950"
+        className="fixed left-4 top-4 z-[100] rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white opacity-0 focus:opacity-100 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
       >
         Skip to checkout
       </a>
       <main
         id="checkout-main"
         tabIndex={-1}
-        className="motion-reduce:scroll-auto outline-none lg:outline-offset-8"
+        className="checkout-shell outline-none motion-reduce:scroll-auto lg:max-h-dvh lg:overflow-hidden"
       >
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr),minmax(16rem,20rem)] xl:gap-14">
-          <div className="space-y-6">
-            <header className="space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
-                Test mode • Simulated processor
+        <div className="mx-auto max-w-6xl px-4 py-5 sm:px-5 lg:flex lg:max-h-dvh lg:flex-col lg:px-8 lg:py-5">
+          <header className="mb-4 shrink-0 sm:mb-5 lg:mb-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+              <CheckoutBrand />
+              <p className="max-w-xl text-xs leading-snug text-slate-600 sm:text-right sm:text-sm">
+                Charges are confirmed with your card issuer using industry-standard encryption.
               </p>
-              <h1 className="text-balance text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 sm:text-4xl">
-                Checkout
-              </h1>
-              <p className="max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
-                Full UI lifecycle (idle → processing → result) against `/api/pay`. Sensitive card details are not posted; only identifiers and billing metadata reach the server.
-              </p>
-            </header>
-
-            <CardPreview
-              cardType={cardType}
-              cardNumberDigits={form.values.cardNumberDigits}
-              cardholderName={form.values.cardholderName}
-              expiryMmYy={form.values.expiryMmYy}
-            />
-
-            <div aria-live="polite" className="space-y-4">
-              <StatusScreen
-                flow={flow}
-                message={message}
-                onRetry={() => {
-                  setPaymentFlow("idle");
-                  window.requestAnimationFrame(() => {
-                    document.getElementById("pay-submit-button")?.focus();
-                  });
-                }}
-                onStartNewPayment={() => {
-                  startNewPaymentSession();
-                  form.reset();
-                }}
-                onAfterSuccess={() => {
-                  resetAfterSuccessView();
-                  form.reset();
-                }}
-              />
-
-              {showFormShell ? (
-                <section
-                  aria-label="Payment details form"
-                  className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 sm:p-6"
-                >
-                  <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <h2 className="text-lg font-semibold text-zinc-950 dark:text-zinc-50">Card details</h2>
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                        Double submissions are blocked while processing.
-                      </p>
-                    </div>
-                    {nextAttemptNumber ? (
-                      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                        Next attempt {nextAttemptNumber} of {maxPaymentAttempts}
-                      </p>
-                    ) : flow === "processing" ? (
-                      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                        Attempt {Math.min(currentAttempt, maxPaymentAttempts)} of{" "}
-                        {maxPaymentAttempts}
-                      </p>
-                    ) : null}
-                  </div>
-                  <PaymentForm
-                    disabled={formDisabled}
-                    values={form.values}
-                    setValues={form.setValues}
-                    setTouched={form.setTouched}
-                    errors={form.errors}
-                    visibleError={form.visibleError}
-                    valid={form.valid}
-                    onSubmit={() => {
-                      void submit(form.values);
-                    }}
-                  />
-                </section>
-              ) : null}
             </div>
-          </div>
+          </header>
 
-          <aside className="lg:pt-24">
-            <TransactionHistory />
-          </aside>
+          <div className="grid min-h-0 flex-1 gap-6 pb-4 lg:grid-cols-[minmax(0,1fr)_min(360px,100%)] lg:gap-8 lg:overflow-hidden lg:pb-0 xl:gap-10">
+            <div className="flex min-h-0 flex-col gap-3 overflow-y-auto lg:pr-1">
+              <div aria-live="polite" className="flex min-h-0 flex-col gap-3">
+                <StatusScreen
+                  flow={flow}
+                  message={message}
+                  onRetry={() => {
+                    setPaymentFlow("idle");
+                    window.requestAnimationFrame(() => {
+                      document.getElementById("pay-submit-button")?.focus();
+                    });
+                  }}
+                  onStartNewPayment={() => {
+                    startNewPaymentSession();
+                    form.reset();
+                  }}
+                  onAfterSuccess={() => {
+                    resetAfterSuccessView();
+                    form.reset();
+                  }}
+                />
+
+                {showFormShell ? (
+                  <section
+                    aria-label="Payment details"
+                    className="shrink-0 rounded-2xl border border-white/70 bg-white/90 px-4 py-5 shadow-[0_12px_40px_-12px_rgba(15,23,42,0.12)] backdrop-blur-sm sm:px-6 sm:py-5"
+                  >
+                    <div className="mb-4 flex flex-col gap-2 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <h2 className="text-base font-bold text-slate-900 sm:text-lg">Pay with card</h2>
+                        <p className="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                          Card must be in your name.
+                        </p>
+                      </div>
+                      {nextAttemptNumber ? (
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                          Next attempt {nextAttemptNumber}/{maxPaymentAttempts}
+                        </p>
+                      ) : flow === "processing" ? (
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                          Attempt {Math.min(currentAttempt, maxPaymentAttempts)}/{maxPaymentAttempts}
+                        </p>
+                      ) : null}
+                    </div>
+                    <PaymentForm
+                      disabled={formDisabled}
+                      values={form.values}
+                      setValues={form.setValues}
+                      setTouched={form.setTouched}
+                      errors={form.errors}
+                      visibleError={form.visibleError}
+                      valid={form.valid}
+                      onSubmit={() => {
+                        void submit(form.values);
+                      }}
+                    />
+                  </section>
+                ) : null}
+              </div>
+            </div>
+
+            <aside className="flex min-h-0 flex-col gap-3 lg:max-h-full lg:overflow-y-auto lg:pb-2">
+              <CardPreview
+                cardType={cardType}
+                cardNumberDigits={form.values.cardNumberDigits}
+                cardholderName={form.values.cardholderName}
+                expiryMmYy={form.values.expiryMmYy}
+              />
+              <PaymentOrderSummary amount={form.values.amount} currency={form.values.currency} />
+              <div className="min-h-0 flex-1 lg:min-h-0">
+                <TransactionHistory />
+              </div>
+            </aside>
+          </div>
         </div>
       </main>
     </>

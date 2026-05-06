@@ -57,7 +57,7 @@ export const CardInput = forwardRef<HTMLInputElement, CardInputProps>(
           const cleaned = e.target.value.replace(/\D/g, "").slice(0, maxDigits);
           onDigitsChange(cleaned);
         }}
-        className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 font-mono text-sm tracking-wide text-zinc-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus-visible:outline-zinc-200"
+        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 font-mono text-sm tracking-wide text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] focus-visible:border-blue-500 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-55"
       />
     );
   },

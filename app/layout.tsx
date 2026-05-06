@@ -14,9 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Payment Gateway Demo",
-  description:
-    "Payment checkout UI with simulated API route, retries, and local transaction history.",
+  title: "PayDesk — Checkout",
+  description: "Secure card checkout with confirmation, retries, and payment history.",
 };
 
 export default function RootLayout({
@@ -28,8 +27,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      style={{ colorScheme: "light" }}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col font-sans text-slate-900">
         <PaymentHydration>{children}</PaymentHydration>
       </body>
     </html>

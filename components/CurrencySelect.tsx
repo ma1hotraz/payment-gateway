@@ -6,6 +6,7 @@ interface CurrencySelectProps {
   disabled?: boolean;
   onChange: (c: CurrencyCode) => void;
   ariaDescribedBy?: string;
+  ariaLabelledBy?: string;
 }
 
 export function CurrencySelect({
@@ -14,15 +15,17 @@ export function CurrencySelect({
   disabled,
   onChange,
   ariaDescribedBy,
+  ariaLabelledBy,
 }: CurrencySelectProps) {
   return (
     <select
       id={id}
+      aria-labelledby={ariaLabelledBy}
       aria-describedby={ariaDescribedBy}
       disabled={disabled}
       value={value}
       onChange={(e) => onChange(e.target.value as CurrencyCode)}
-      className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus-visible:outline-zinc-200"
+      className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-sm font-medium text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] focus-visible:border-blue-500 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-55"
     >
       <option value="USD">USD</option>
       <option value="INR">INR</option>

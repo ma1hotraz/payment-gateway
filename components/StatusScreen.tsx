@@ -12,6 +12,9 @@ interface StatusScreenProps {
   onAfterSuccess: () => void;
 }
 
+const panel =
+  "rounded-2xl border bg-white px-6 py-6 shadow-[0_12px_40px_-12px_rgba(15,23,42,0.12)] ";
+
 export function StatusScreen({
   flow,
   message,
@@ -45,7 +48,7 @@ export function StatusScreen({
   if (flow === "processing") {
     return (
       <section
-        className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 sm:p-6"
+        className={`${panel} border-slate-200/90`}
         aria-labelledby="payment-status-heading"
         aria-busy="true"
         aria-live="polite"
@@ -54,19 +57,19 @@ export function StatusScreen({
           ref={headingRef}
           id="payment-status-heading"
           tabIndex={-1}
-          className="text-lg font-semibold outline-none"
+          className="text-lg font-bold text-slate-900 outline-none"
         >
           Processing payment
         </h2>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          Please wait—we are securely completing your checkout. Slow networks may take a moment.
+        <p className="mt-2 text-sm text-slate-600">
+          Confirming details with your card issuer—this can take up to a few seconds on slower connections.
         </p>
-        <div className="mt-4 flex items-center gap-3 text-sm font-medium text-zinc-900 dark:text-zinc-50">
+        <div className="mt-5 flex items-center gap-3 text-sm font-semibold text-slate-700">
           <span
-            className="inline-block size-4 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 motion-reduce:animate-none motion-reduce:border-t-transparent dark:border-zinc-700 dark:border-t-zinc-100"
+            className="inline-block size-5 animate-spin rounded-full border-2 border-slate-200 border-t-[#2563eb] motion-reduce:animate-none motion-reduce:border-t-transparent"
             aria-hidden
           />
-          Processing securely…
+          Please wait…
         </div>
       </section>
     );
@@ -75,7 +78,7 @@ export function StatusScreen({
   if (flow === "success") {
     return (
       <section
-        className="rounded-xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm dark:border-emerald-900/70 dark:bg-emerald-950/40 sm:p-6"
+        className={`${panel} border-emerald-200 bg-emerald-50/70`}
         aria-labelledby="payment-status-heading"
         aria-live="polite"
       >
@@ -83,20 +86,20 @@ export function StatusScreen({
           ref={headingRef}
           id="payment-status-heading"
           tabIndex={-1}
-          className="text-lg font-semibold text-emerald-900 outline-none dark:text-emerald-100"
+          className="text-lg font-bold text-emerald-950 outline-none"
         >
-          Payment successful
+          Payment confirmed
         </h2>
-        <p className="mt-2 text-sm text-emerald-900/90 dark:text-emerald-100/90">
-          {message ?? "Your payment completed successfully (simulated)."}
+        <p className="mt-2 text-sm leading-relaxed text-emerald-900/90">
+          {message ?? "Your payment completed successfully."}
         </p>
         <button
           ref={primaryRef}
           type="button"
-          className="mt-4 inline-flex h-11 items-center justify-center rounded-lg bg-emerald-900 px-4 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-900 dark:bg-emerald-100 dark:text-emerald-950 dark:focus-visible:outline-emerald-100"
+          className="mt-5 inline-flex h-11 min-w-[140px] items-center justify-center rounded-xl bg-emerald-700 px-5 text-sm font-bold text-white shadow-sm hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
           onClick={onAfterSuccess}
         >
-          Pay another amount
+          New payment
         </button>
       </section>
     );
@@ -106,7 +109,7 @@ export function StatusScreen({
 
   return (
     <section
-      className="rounded-xl border border-red-200 bg-red-50 p-5 shadow-sm dark:border-red-900/60 dark:bg-red-950/30 sm:p-6"
+      className={`${panel} border-red-200 bg-red-50/80`}
       aria-labelledby="payment-status-heading"
       aria-live="assertive"
     >
@@ -114,22 +117,22 @@ export function StatusScreen({
         ref={headingRef}
         id="payment-status-heading"
         tabIndex={-1}
-        className="text-lg font-semibold text-red-900 outline-none dark:text-red-50"
+        className="text-lg font-bold text-red-950 outline-none"
       >
-        {isTimeout ? "Payment timed out" : "Payment failed"}
+        {isTimeout ? "Request timed out" : "Payment declined"}
       </h2>
-      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-red-900/80 dark:text-red-100/80">
+      <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-red-800/85">
         Attempt {Math.min(currentAttempt, maxPaymentAttempts)} of {maxPaymentAttempts}
       </p>
-      <p className="mt-2 text-sm text-red-900 dark:text-red-100">{message ?? "Something went wrong."}</p>
+      <p className="mt-2 text-sm leading-relaxed text-red-950">{message ?? "Unable to complete this payment."}</p>
 
       {!attemptsExhausted ? (
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-5 flex flex-wrap gap-3">
           {retryAllowed ? (
             <button
               ref={primaryRef}
               type="button"
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-red-900 px-4 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900 dark:bg-red-100 dark:text-red-950 dark:focus-visible:outline-red-100"
+              className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-bold text-white shadow-md shadow-blue-600/25 hover:bg-[#1d4ed8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]"
               onClick={onRetry}
             >
               Try again
@@ -137,24 +140,24 @@ export function StatusScreen({
           ) : null}
           <button
             type="button"
-            className="inline-flex h-11 items-center justify-center rounded-lg border border-red-900/30 bg-white px-4 text-sm font-semibold text-red-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900 dark:bg-red-950 dark:text-red-50 dark:focus-visible:outline-red-100"
+            className={`inline-flex h-11 items-center justify-center rounded-xl border-2 border-slate-200 bg-white px-5 text-sm font-bold text-slate-800 hover:border-slate-300 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400`}
             onClick={onStartNewPayment}
           >
-            Start over
+            Cancel
           </button>
         </div>
       ) : (
-        <div className="mt-4 space-y-3">
-          <p className="text-sm font-medium text-red-950 dark:text-red-100">
-            Maximum attempts reached for this transaction. Please start a new payment or try a different card.
+        <div className="mt-5 space-y-3">
+          <p className="text-sm font-medium text-red-950">
+            This payment could not be completed after multiple attempts. Use a different card or contact your bank.
           </p>
           <button
             ref={primaryRef}
             type="button"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-red-900 px-4 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-900 dark:bg-red-100 dark:text-red-950 dark:focus-visible:outline-red-100"
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-bold text-white shadow-md hover:bg-[#1d4ed8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]"
             onClick={onStartNewPayment}
           >
-            Start new payment
+            Start over
           </button>
         </div>
       )}

@@ -40,6 +40,11 @@ const ID = {
   curr: "pay-currency",
 } as const;
 
+const fieldWrap = "rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] ";
+const focusRing =
+  "focus-visible:border-blue-500 focus-visible:ring-[3px] focus-visible:ring-blue-500/20 focus-visible:outline-none";
+const disabledState = "disabled:cursor-not-allowed disabled:opacity-55";
+
 export function PaymentForm({
   disabled,
   values,
@@ -55,7 +60,7 @@ export function PaymentForm({
 
   return (
     <form
-      className="space-y-4"
+      className="space-y-3.5 sm:space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
         if (disabled || !valid) return;
@@ -64,8 +69,9 @@ export function PaymentForm({
       noValidate
     >
       <div>
-        <label htmlFor={ID.name} className="mb-1 block text-sm font-medium text-zinc-800 dark:text-zinc-200">
-          Cardholder name
+        <label htmlFor={ID.name} className="block">
+          <span className="text-sm font-bold text-slate-900">Name on card</span>
+          <span className="mt-1 block text-xs text-slate-500">Exactly as printed on the card.</span>
         </label>
         <input
           id={ID.name}
@@ -78,19 +84,20 @@ export function PaymentForm({
           onBlur={() => setTouched((t) => ({ ...t, cardholderName: true }))}
           aria-invalid={visibleError("cardholderName")}
           aria-describedby={visibleError("cardholderName") ? `${ID.name}-error` : undefined}
-          className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus-visible:outline-zinc-200"
+          className={`${fieldWrap} ${focusRing} ${disabledState} mt-1.5 h-11 w-full px-3.5 text-sm text-slate-900 placeholder:text-slate-400`}
         />
         {visibleError("cardholderName") ? (
-          <p id={`${ID.name}-error`} className="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
+          <p id={`${ID.name}-error`} className="mt-1.5 text-sm text-red-600" role="alert">
             {errors.cardholderName ?? validateCardholder(values.cardholderName)}
           </p>
         ) : null}
       </div>
 
       <div>
-        <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-          <label htmlFor={ID.number} className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            Card number
+        <div className="mb-1.5 flex flex-wrap items-start justify-between gap-2">
+          <label htmlFor={ID.number} className="block">
+            <span className="text-sm font-bold text-slate-900">Card number</span>
+            <span className="mt-1 block text-xs text-slate-500">Digits only; spacing is formatted for you.</span>
           </label>
           <CardTypeBadge type={cardType} />
         </div>
@@ -110,19 +117,20 @@ export function PaymentForm({
               cvv: "",
             }))
           }
-          placeholder="4242 4242 4242 4242"
+          placeholder=""
         />
         {visibleError("cardNumberDigits") ? (
-          <p id={ID.numberErr} className="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
+          <p id={ID.numberErr} className="mt-1.5 text-sm text-red-600" role="alert">
             {errors.cardNumberDigits ?? validateCardNumberDigits(values.cardNumberDigits)}
           </p>
         ) : null}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4">
         <div>
-          <label htmlFor={ID.expiry} className="mb-1 block text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            Expiry (MM/YY)
+          <label htmlFor={ID.expiry} className="block">
+            <span className="text-sm font-bold text-slate-900">Expiry</span>
+            <span className="mt-1 block text-xs text-slate-500">Month and year.</span>
           </label>
           <input
             id={ID.expiry}
@@ -138,18 +146,19 @@ export function PaymentForm({
             onBlur={() => setTouched((t) => ({ ...t, expiryMmYy: true }))}
             aria-invalid={visibleError("expiryMmYy")}
             aria-describedby={visibleError("expiryMmYy") ? ID.expiryErr : undefined}
-            placeholder="12/28"
-            className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 font-mono text-sm text-zinc-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus-visible:outline-zinc-200"
+            placeholder="MM/YY"
+            className={`${fieldWrap} ${focusRing} ${disabledState} mt-1.5 h-11 w-full px-3.5 font-mono text-sm text-slate-900`}
           />
           {visibleError("expiryMmYy") ? (
-            <p id={ID.expiryErr} className="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
+            <p id={ID.expiryErr} className="mt-1.5 text-sm text-red-600" role="alert">
               {errors.expiryMmYy ?? validateExpiry(values.expiryMmYy)}
             </p>
           ) : null}
         </div>
         <div>
-          <label htmlFor={ID.cvv} className="mb-1 block text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            CVV
+          <label htmlFor={ID.cvv} className="block">
+            <span className="text-sm font-bold text-slate-900">CVV</span>
+            <span className="mt-1 block text-xs text-slate-500">Security code on the back.</span>
           </label>
           <input
             id={ID.cvv}
@@ -168,70 +177,79 @@ export function PaymentForm({
             onBlur={() => setTouched((t) => ({ ...t, cvv: true }))}
             aria-invalid={visibleError("cvv")}
             aria-describedby={visibleError("cvv") ? ID.cvvErr : undefined}
-            className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 font-mono text-sm text-zinc-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus-visible:outline-zinc-200"
+            className={`${fieldWrap} ${focusRing} ${disabledState} mt-1.5 h-11 w-full px-3.5 font-mono text-sm tracking-widest text-slate-900`}
           />
           {visibleError("cvv") ? (
-            <p id={ID.cvvErr} className="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
+            <p id={ID.cvvErr} className="mt-1.5 text-sm text-red-600" role="alert">
               {errors.cvv ?? validateCvv(values.cardNumberDigits, values.cvv)}
             </p>
           ) : null}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr,minmax(0,9rem)] sm:items-end">
-            <div>
-              <label htmlFor={ID.amount} className="mb-1 block text-sm font-medium text-zinc-800 dark:text-zinc-200">
-                Amount
-              </label>
-              <input
-                id={ID.amount}
-                type="text"
-                inputMode="decimal"
-                disabled={disabled}
-                value={values.amount}
-                onChange={(e) => setValues((v) => ({ ...v, amount: e.target.value }))}
-                onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
-                aria-invalid={visibleError("amount")}
-                aria-describedby={
-                  visibleError("amount") ? ID.amountErr : `${ID.amount}-hint`
-                }
-                className="h-11 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus-visible:outline-zinc-200"
-              />
-              {visibleError("amount") ? (
-                <p id={ID.amountErr} className="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
-                  {errors.amount ?? validateAmount(values.amount)}
-                </p>
-              ) : (
-                <p id={`${ID.amount}-hint`} className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                  Major units (e.g. 49.99)
-                </p>
-              )}
-            </div>
-            <div>
-              <label htmlFor={ID.curr} className="mb-1 block text-sm font-medium text-zinc-800 dark:text-zinc-200">
-                Currency
-              </label>
-              <CurrencySelect
-                id={ID.curr}
-                value={values.currency}
-                disabled={disabled}
-                ariaDescribedBy={`${ID.amount}-hint`}
-                onChange={(c: CurrencyCode) => setValues((v) => ({ ...v, currency: c }))}
-              />
-            </div>
+      <fieldset className="m-0 min-w-0 border-0 p-0">
+        <legend className="sr-only">Amount and currency</legend>
+        <div className="block">
+          <span id="pay-amount-group-label" className="text-sm font-bold text-slate-900">
+            Amount & currency
+          </span>
+          <span className="mt-0.5 block text-xs text-slate-500">Enter the charge in major units.</span>
+        </div>
+        <div className="mt-1.5 grid min-w-0 grid-cols-[minmax(0,1fr)_6.5rem] items-start gap-3 sm:grid-cols-[minmax(0,1fr)_7rem] sm:gap-4">
+          <div className="min-w-0">
+            <label htmlFor={ID.amount} className="sr-only">
+              Amount value
+            </label>
+            <input
+              id={ID.amount}
+              type="text"
+              inputMode="decimal"
+              disabled={disabled}
+              value={values.amount}
+              onChange={(e) => setValues((v) => ({ ...v, amount: e.target.value }))}
+              onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
+              aria-labelledby="pay-amount-group-label"
+              aria-invalid={visibleError("amount")}
+              aria-describedby={
+                visibleError("amount") ? ID.amountErr : `${ID.amount}-hint`
+              }
+              className={`${fieldWrap} ${focusRing} ${disabledState} h-11 w-full min-w-0 px-3.5 text-sm tabular-nums text-slate-900`}
+            />
+            {visibleError("amount") ? (
+              <p id={ID.amountErr} className="mt-1.5 text-sm text-red-600" role="alert">
+                {errors.amount ?? validateAmount(values.amount)}
+              </p>
+            ) : (
+              <p id={`${ID.amount}-hint`} className="mt-1.5 text-xs text-slate-500">
+                Mirrors the summary panel.
+              </p>
+            )}
+          </div>
+          <div className="min-w-0">
+            <label htmlFor={ID.curr} className="sr-only">
+              Currency
+            </label>
+            <CurrencySelect
+              id={ID.curr}
+              value={values.currency}
+              disabled={disabled}
+              ariaDescribedBy={
+                visibleError("amount") ? ID.amountErr : `${ID.amount}-hint`
+              }
+              onChange={(c: CurrencyCode) => setValues((v) => ({ ...v, currency: c }))}
+              ariaLabelledBy="pay-amount-group-label"
+            />
           </div>
         </div>
-      </div>
+      </fieldset>
 
       <button
         id="pay-submit-button"
         type="submit"
         disabled={disabled || !valid}
-        className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-lg bg-zinc-900 px-4 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:bg-zinc-400 motion-safe:transition dark:bg-zinc-100 dark:text-zinc-900 dark:focus-visible:outline-zinc-200 dark:disabled:bg-zinc-600"
+        className="mt-3 flex h-11 w-full items-center justify-center rounded-xl bg-[#2563eb] text-sm font-bold tracking-wide text-white shadow-md shadow-blue-600/20 transition-colors hover:bg-[#1d4ed8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
       >
-        Pay securely
+        Pay now
       </button>
     </form>
   );
