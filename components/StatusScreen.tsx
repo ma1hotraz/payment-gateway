@@ -61,6 +61,9 @@ export function StatusScreen({
         >
           Processing payment
         </h2>
+        <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+          Attempt {Math.min(currentAttempt, maxPaymentAttempts)} of {maxPaymentAttempts}
+        </p>
         <p className="mt-2 text-sm text-slate-600">
           Confirming details with your card issuer—this can take up to a few seconds on slower connections.
         </p>

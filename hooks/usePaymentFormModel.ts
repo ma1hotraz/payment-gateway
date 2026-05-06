@@ -20,6 +20,7 @@ export function usePaymentFormModel() {
 
   const errors = useMemo(() => buildFieldErrors(values), [values]);
 
+  /** Assignment: errors while typing **or** after blur — `PaymentForm` sets touched onChange + onBlur. */
   const visibleError = <K extends keyof PaymentFormValues>(field: K) =>
     Boolean(touched[field]) && Boolean(errors[field]);
 

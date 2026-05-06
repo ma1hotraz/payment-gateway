@@ -114,6 +114,7 @@ export function PaymentExperience() {
                     </div>
                     <PaymentForm
                       disabled={formDisabled}
+                      submitting={flow === "processing"}
                       values={form.values}
                       setValues={form.setValues}
                       setTouched={form.setTouched}

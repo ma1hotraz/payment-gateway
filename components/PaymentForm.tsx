@@ -18,6 +18,8 @@ import {
 
 interface PaymentFormProps {
   disabled: boolean;
+  /** True while a payment request is in flight — extra guard against double submit + clearer UX. */
+  submitting?: boolean;
   values: PaymentFormValues;
   setValues: Dispatch<SetStateAction<PaymentFormValues>>;
   setTouched: Dispatch<SetStateAction<TouchedFields>>;
@@ -47,6 +49,7 @@ const disabledState = "disabled:cursor-not-allowed disabled:opacity-55";
 
 export function PaymentForm({
   disabled,
+  submitting = false,
   values,
   setValues,
   setTouched,
@@ -61,9 +64,10 @@ export function PaymentForm({
   return (
     <form
       className="space-y-3.5 sm:space-y-4"
+      aria-busy={submitting}
       onSubmit={(e) => {
         e.preventDefault();
-        if (disabled || !valid) return;
+        if (disabled || submitting || !valid) return;
         onSubmit();
       }}
       noValidate
@@ -80,7 +84,10 @@ export function PaymentForm({
           autoComplete="cc-name"
           disabled={disabled}
           value={values.cardholderName}
-          onChange={(e) => setValues((v) => ({ ...v, cardholderName: e.target.value }))}
+          onChange={(e) => {
+            setTouched((t) => ({ ...t, cardholderName: true }));
+            setValues((v) => ({ ...v, cardholderName: e.target.value }));
+          }}
           onBlur={() => setTouched((t) => ({ ...t, cardholderName: true }))}
           aria-invalid={visibleError("cardholderName")}
           aria-describedby={visibleError("cardholderName") ? `${ID.name}-error` : undefined}
@@ -110,13 +117,14 @@ export function PaymentForm({
           invalid={visibleError("cardNumberDigits")}
           ariaDescribedBy={visibleError("cardNumberDigits") ? ID.numberErr : undefined}
           onBlur={() => setTouched((t) => ({ ...t, cardNumberDigits: true }))}
-          onDigitsChange={(d) =>
+          onDigitsChange={(d) => {
+            setTouched((t) => ({ ...t, cardNumberDigits: true }));
             setValues((v) => ({
               ...v,
               cardNumberDigits: d,
               cvv: "",
-            }))
-          }
+            }));
+          }}
           placeholder=""
         />
         {visibleError("cardNumberDigits") ? (
@@ -140,9 +148,13 @@ export function PaymentForm({
             autoComplete="cc-exp"
             disabled={disabled}
             value={values.expiryMmYy}
-            onChange={(e) =>
-              setValues((v) => ({ ...v, expiryMmYy: formatExpiryMmYyInput(e.target.value) }))
-            }
+            onChange={(e) => {
+              setTouched((t) => ({ ...t, expiryMmYy: true }));
+              setValues((v) => ({
+                ...v,
+                expiryMmYy: formatExpiryMmYyInput(e.target.value),
+              }));
+            }}
             onBlur={() => setTouched((t) => ({ ...t, expiryMmYy: true }))}
             aria-invalid={visibleError("expiryMmYy")}
             aria-describedby={visibleError("expiryMmYy") ? ID.expiryErr : undefined}
@@ -168,12 +180,13 @@ export function PaymentForm({
             autoComplete="cc-csc"
             disabled={disabled}
             value={values.cvv}
-            onChange={(e) =>
+            onChange={(e) => {
+              setTouched((t) => ({ ...t, cvv: true }));
               setValues((v) => ({
                 ...v,
                 cvv: e.target.value.replace(/\D/g, "").slice(0, cardType === "amex" ? 4 : 3),
-              }))
-            }
+              }));
+            }}
             onBlur={() => setTouched((t) => ({ ...t, cvv: true }))}
             aria-invalid={visibleError("cvv")}
             aria-describedby={visibleError("cvv") ? ID.cvvErr : undefined}
@@ -206,7 +219,10 @@ export function PaymentForm({
               inputMode="decimal"
               disabled={disabled}
               value={values.amount}
-              onChange={(e) => setValues((v) => ({ ...v, amount: e.target.value }))}
+              onChange={(e) => {
+                setTouched((t) => ({ ...t, amount: true }));
+                setValues((v) => ({ ...v, amount: e.target.value }));
+              }}
               onBlur={() => setTouched((t) => ({ ...t, amount: true }))}
               aria-labelledby="pay-amount-group-label"
               aria-invalid={visibleError("amount")}
@@ -236,7 +252,10 @@ export function PaymentForm({
               ariaDescribedBy={
                 visibleError("amount") ? ID.amountErr : `${ID.amount}-hint`
               }
-              onChange={(c: CurrencyCode) => setValues((v) => ({ ...v, currency: c }))}
+              onChange={(c: CurrencyCode) => {
+                setTouched((t) => ({ ...t, currency: true }));
+                setValues((v) => ({ ...v, currency: c }));
+              }}
               ariaLabelledBy="pay-amount-group-label"
             />
           </div>
@@ -246,10 +265,10 @@ export function PaymentForm({
       <button
         id="pay-submit-button"
         type="submit"
-        disabled={disabled || !valid}
+        disabled={disabled || submitting || !valid}
         className="mt-3 flex h-11 w-full items-center justify-center rounded-xl bg-[#2563eb] text-sm font-bold tracking-wide text-white shadow-md shadow-blue-600/20 transition-colors hover:bg-[#1d4ed8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
       >
-        Pay now
+        {submitting ? "Processing…" : "Pay now"}
       </button>
     </form>
   );

@@ -18,11 +18,14 @@ export type TransactionHistoryStatus =
   | "failed"
   | "timeout";
 
+/** Assignment wording — persisted transaction row status */
+export type PaymentStatus = TransactionHistoryStatus;
+
 export interface Transaction {
   id: string;
   amount: number;
   currency: CurrencyCode;
-  status: TransactionHistoryStatus;
+  status: PaymentStatus;
   createdAt: string;
   updatedAt: string;
   attemptCount: number;
