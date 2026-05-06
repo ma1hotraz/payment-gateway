@@ -28,7 +28,7 @@ npm run lint
 
 ## Behaviour
 
-### Simulated gateway (`POST /api/pay`)
+### Payment API route (`POST /api/pay`)
 
 One random draw per request:
 
