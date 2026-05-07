@@ -86,7 +86,7 @@ export function TransactionHistory() {
             <li key={txn.id}>
               <button
                 type="button"
-                onClick={() => setSelectedId(txn.id)}
+                onClick={() => setSelectedId(sel ? null : txn.id)}
                 className={`w-full rounded-xl border px-3 py-2.5 text-left text-sm transition-colors ${
                   sel
                     ? "border-[#2563eb] bg-blue-50/70 ring-2 ring-[#2563eb]/35"
